@@ -10,6 +10,7 @@ import tempfile
 import platform
 import zipfile
 import stat
+
 from pathlib import Path
 
 import requests
