@@ -3,8 +3,10 @@ import numpy as np
 
 
 def delta_phi(ticks: int, prev_ticks: int, resolution: int) -> Tuple[float, float]:
-    raise NotImplementedError("TODO: Implement this function")
-
+    delta_ticks = ticks - prev_ticks
+    alpha = 2 * np.pi / resolution
+    dphi = delta_ticks * alpha
+    return dphi, ticks
 
 def pose_estimation(
     R: float,
@@ -15,4 +17,14 @@ def pose_estimation(
     delta_phi_left: float,
     delta_phi_right: float,
 ) -> Tuple[float, float, float]:
-    raise NotImplementedError("TODO: Implement this function")
+    d_left = R * delta_phi_left
+    d_right = R * delta_phi_right
+ 
+    d_A = (d_left + d_right) / 2.0
+    delta_theta = (d_right - d_left) / baseline
+ 
+    x_curr = x_prev + d_A * np.cos(theta_prev)
+    y_curr = y_prev + d_A * np.sin(theta_prev)
+    theta_curr = theta_prev + delta_theta
+ 
+    return x_curr, y_curr, theta_curr

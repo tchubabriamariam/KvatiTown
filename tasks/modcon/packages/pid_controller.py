@@ -25,4 +25,21 @@ def PIDController(
     prev_int: float,
     delta_t: float,
 ) -> Tuple[float, float, float, float]:
-    raise NotImplementedError("TODO: Implement this function")
+    e = theta_ref - theta_hat
+
+    # Integral with anti-windup clamp suggested by AI
+    e_int = prev_int + e * delta_t
+    e_int = np.clip(e_int, -2.0, 2.0)
+
+    # Derivative
+    if delta_t > 0:
+        e_der = (e - prev_e) / delta_t
+    else:
+        e_der = 0.0
+
+    # PID control law
+    omega = K_P * e + K_I * e_int + K_D * e_der
+    omega = np.clip(omega, MIN_OMEGA, MAX_OMEGA)
+
+    return v_0, omega, e, e_int
+
